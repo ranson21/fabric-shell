@@ -2,7 +2,7 @@
 //!
 //! This crate is the logic layer of a Fabric shell. It sits below both
 //! products described in
-//! [ADR-0011](https://github.com/ranson21/ranortv-os/blob/master/docs/adr/0011-fabric-shell.md):
+//! [ADR-0011](https://github.com/ranson21/apex-os/blob/master/docs/adr/0011-fabric-shell.md):
 //! `ranortv-os`'s launcher, where all of it was written and is still running,
 //! and Apex's shell, which is the second consumer that made extracting it a
 //! move rather than a guess.
@@ -46,6 +46,17 @@
 //! | [`focus`] | The state machine: zones, tabs, indices, and what each action does |
 //! | [`navigation`] | Action names to actions, the one direction that is neutral |
 //! | [`gamepad`] | The pump: `fabric-input` devices and intents, drained per poll |
+//!
+//! # Where the ADRs live
+//!
+//! This crate cites decisions from two repositories, because the boundary it
+//! sits on has two sides. ADR-0011, the decision to extract it, is
+//! **apex-os**'s — Apex is the second consumer that justified the move, so
+//! Apex wrote it down. ADR-0006, the input and controller-mapping decisions
+//! the pump inherits, is **ranortv-os**'s, and apex-os's
+//! `docs/adr/shared-with-fabric.md` records it as jointly owned and
+//! deliberately not copied. Neither has a Fabric home yet; when the platform
+//! ADRs get one, these citations move with them.
 //!
 //! # Visibility
 //!

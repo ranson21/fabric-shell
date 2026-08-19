@@ -1,6 +1,6 @@
 [package]
 name        = "fabric-shell"
-description = "The focus model and controller pump for RaNor Fabric shells. See ranortv-os docs/adr/0011."
+description = "The focus model and controller pump for RaNor Fabric shells. See apex-os docs/adr/0011."
 version     = "0.1.0"
 edition     = "2021"
 license     = "MIT OR Apache-2.0"

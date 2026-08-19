@@ -18,7 +18,7 @@ have made one product's interface shape the platform's, by accident, before
 anything existed to disagree with it.
 
 Apex is now that second consumer.
-[ADR-0011](https://github.com/ranson21/ranortv-os/blob/master/docs/adr/0011-fabric-shell.md)
+[ADR-0011](https://github.com/ranson21/apex-os/blob/master/docs/adr/0011-fabric-shell.md)
 is the decision, and the finding behind it is that almost none of RaNorTV's
 launcher is RaNorTV-specific: the product-specific part is the Slint UI and
 five built-in tiles, and every supporting module was written without product
