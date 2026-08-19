@@ -1,0 +1,44 @@
+[package]
+name        = "fabric-shell"
+description = "The focus model and controller pump for RaNor Fabric shells. See ranortv-os docs/adr/0011."
+version     = "0.1.0"
+edition     = "2021"
+license     = "MIT OR Apache-2.0"
+repository  = "https://github.com/ranson21/fabric-shell"
+authors     = ["Abigail Ranson <abby@abbyranson.com>"]
+
+# The metadata above was inherited from ranortv-os's workspace — version,
+# edition, licence, repository and authors were all `*.workspace = true`. A
+# standalone crate has no workspace to inherit from, so the values are written
+# out. They are the same values, not new ones, except `repository`, which now
+# points at where this crate actually lives. Same treatment fabric-input had.
+publish = false
+
+[dependencies]
+# The pad this crate pumps. A git dependency with no rev pinned, matching how
+# ranortv-os depends on it: the consuming product's Cargo.lock pins the exact
+# commit and its CI builds --locked, so a library pinning one here would only
+# hide a resolution failure until a product hit it.
+#
+# fabric-input is public and this crate is private. That asymmetry is not
+# decorative — see the note at the top of lib.rs, and the visibility comment in
+# ranor-fabric's environments/global/repos/fabric-shell/terragrunt.hcl.
+fabric-input = { git = "https://github.com/ranson21/fabric-input", branch = "master" }
+
+# Also previously workspace-inherited. The version matches what ranortv-os
+# pinned, so this extraction changes no dependency.
+tracing = "0.1"
+
+[features]
+default = []
+
+# Forwarded rather than re-decided. gilrs pulls in libudev-sys, whose build
+# script probes pkg-config at *configure* time, so a default-on feature would
+# make every build — including CI's — require libudev headers. fabric-input
+# turned it off by default for exactly this reason and the same reasoning
+# applies one layer up: `Pump::with_source` needs no backend at all, and only
+# `Pump::new` does.
+#
+# The product turns it on at its call site, where the matching CI system
+# dependency is declared alongside it.
+gilrs-backend = ["fabric-input/gilrs-backend"]

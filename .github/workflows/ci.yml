@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+# Job names here would be the required status check contexts in this
+# repository's Terraform, which lives in ranor-fabric at
+# environments/global/repos/fabric-shell. There are none today: branch
+# protection is unavailable on private repositories on this plan, so the
+# checks run and report but nothing requires them to pass. That composition
+# records it in full. If it is ever restored, add "fmt", "clippy" and "test"
+# to required_status_checks.contexts only AFTER this workflow is on master —
+# a required context that nothing produces blocks every pull request.
+
+jobs:
+  fmt:
+    name: fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo fmt --all --check
+
+  clippy:
+    name: clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # gilrs links libudev rather than dlopen'ing it, so --all-features needs
+      # the headers. The default feature set does not, which is the whole point
+      # of gilrs-backend being off by default — but CI checking only the
+      # default set would never compile `Pump::new` at all.
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libudev-dev
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --all-features --all-targets -- -D warnings
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libudev-dev
+      - uses: Swatinem/rust-cache@v2
+      # Not --locked. Cargo.lock is untracked here, as it should be for a
+      # library: the lock that matters is the consuming product's, and pinning
+      # one here would only hide a resolution failure until a product hit it.
+      #
+      # fabric-input is a *public* git dependency, so the default GITHUB_TOKEN
+      # can fetch it and this workflow needs no credential. The reverse
+      # direction is the one that does: a product depending on this private
+      # crate cannot fetch it with the default token. See the visibility note
+      # in this repository's Terraform.
+      - run: cargo test --all-features
